@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>TESS Playround</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+							<header id="header">
+								<a href="index.html" class="logo"><strong>Christopher J. Burke</strong> TESS Research Scientist @ MIT</a>
+								<ul class="icons">
+									<li><a href="https://twitter.com/curiousterran" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="https://github.com/christopherburke/" class="icon brands fa-github"><span class="label">Github</span></a></li>
+									<li><a href="https://orcid.org/0000-0002-7754-9486">ORCID</a></li>
+									<li><a href="https://ui.adsabs.harvard.edu/search/filter_database_fq_database=AND&filter_database_fq_database=database%3A%22astronomy%22&filter_property_fq_property=AND&filter_property_fq_property=property%3A%22refereed%22&fq=%7B!type%3Daqp%20v%3D%24fq_database%7D&fq=%7B!type%3Daqp%20v%3D%24fq_property%7D&fq=%7B!type%3Daqp%20v%3D%24fq_aff%7D&fq_aff=(((aff_facet_hier%3A%220%2FSTScI%22%20OR%20aff_facet_hier%3A%220%2FMIT%22%20OR%20aff_facet_hier%3A%220%2FSETI%20Inst%22%20OR%20aff_facet_hier%3A%220%2FNASA%20Ames%22))%20OR%20aff_facet_hier%3A%220%2FHarvard%20U%22%20OR%20aff_facet_hier%3A%220%2FSETI%20Inst%22%20OR%20aff_facet_hier%3A%220%2FNASA%20Ames%22%20OR%20aff_facet_hier%3A%221%2FMIT%2FKavli%20Inst%22%20OR%20aff_facet_hier%3A%221%2FSI%2FCfA%22%20OR%20aff_facet_hier%3A%220%2FSTScI%22)&fq_database=(database%3A%22astronomy%22)&fq_property=(property%3A%22refereed%22)&q=%20author%3A%22Burke%2C%20Christopher%22&sort=date%20desc%2C%20bibcode%20desc&p_=0">ADS</a></li>
+									<li><a href="https://scholar.google.com/citations?user=hxo9mEUAAAAJ&hl=en&oi=ao">Google Scholar</a></li>
+									<li><a href="https://www.linkedin.com/in/christopher-burke-1b315a130" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+								</ul>
+							</header>
+
+							<!-- Content -->
+								<section>
+									<header class="main">
+										<h1>TESS Playground</h1>
+									</header>
+
+									<span class="image left"><img src="images/TESSInSpaceRender1.jpeg" alt="" /></span>Convert the most common stellar coordinate string formats into RA and Declination decimal degrees along with several other standard coordinate formats.
+									Double check that one of the output formats agrees with the format that was entered to confirm the conversion was done correctly.
+									Javascript and Python versions are available <a href="https://github.com/christopherburke/radecparse">HERE</a>.
+									<h3>Enter Coordinates of Star:</h3></b><input id="starCoordString" style="width:20em" type="text"><div id="starCoordError" style="display: none; color: red;">Error Message!</div>
+										<button id="starCoordRunJava">Convert</button>
+									<b>RA & Declination [deg]: </b><span id="starCoordOutput" style="display: none;">Output Text</span>
+									<!--
+									<hr class="major" />
+
+									<h2>Interdum sed dapibus</h2>
+									<p>Donec eget ex magna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fergiat. Pellentesque in mi eu massa lacinia malesuada et a elit. Donec urna ex, lacinia in purus ac, pretium pulvinar mauris. Curabitur sapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit.</p>
+									<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque venenatis dolor imperdiet dolor mattis sagittis. Praesent rutrum sem diam, vitae egestas enim auctor sit amet. Pellentesque leo mauris, consectetur id ipsum sit amet, fersapien risus, commodo eget turpis at, elementum convallis elit. Pellentesque enim turpis, hendrerit tristique lorem ipsum dolor.</p>
+
+									-->
+
+								</section>
+
+						</div>
+					</div>
+
+				<!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+						<!-- Menu -->
+							<nav id="menu">
+								<header class="major">
+									<h2>Menu</h2>
+								</header>
+								<ul>
+									<li><a href="index.html">Homepage</a></li>
+									<li><a href="tess_play.html">TESS Playground</a></li>
+								</ul>
+							</nav>
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>Get in touch</h2>
+									<p>My email address is obfuscated (hopefully) with NATO phonetic alphabet and unicode characters.</p>
+								</header>
+								<ul class="contact">
+									<li class="icon solid fa-envelope">cjburke ⚛ <strong>M</strong>ike&nbsp<strong>I</strong>ndigo&nbsp<strong>T</strong>ango ⚬ <strong>E</strong>cho&nbsp<strong>D</strong>elta&nbsp<strong>U</strong>niform</li>
+									<li class="icon solid fa-home">MIT Kavli Institute for Astrophysics and Space Research<br />
+									77 Massachusetts Avenue<br />
+									Cambridge, MA 02139</li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<footer id="footer">
+								<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+							</footer>
+
+					</div>
+				</div>
+
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="assets/js/radecparse.1.1.min.js"></script>
+
+		<!-- radecparse feed input from text box -->
+		<script>
+		$(document).ready(function() {
+			function radecfeedit(inputId, errorId, outputId) {
+				$(errorId).hide();
+				$(outputId).hide();
+				var rdpOut = rdp($(inputId).val());
+				if (rdpOut[2]) {
+					var htmlout = rdpOut[0].toFixed(8) + ' ' + rdpOut[1].toFixed(8);
+					// Success also run degconvert to get other formats
+					var degOut = degconvert(rdpOut[0], rdpOut[1]);
+					if (degOut[0]) {
+						for (i=1;i<=5;i++) {
+							htmlout = htmlout + "<br>" + degOut[i];
+						}
+					}
+					// append degconvert output formats
+					$(outputId).html(htmlout);
+					$(outputId).show();
+				} else {
+					$(errorId).text(rdpOut[3]);
+					$(errorId).show();
+				}
+			}
+
+			$('#starCoordRunJava').click(function() {
+				radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
+			}); // End Click event
+			// Press enter in textbox event from
+			// https://stackoverflow.com/questions/6524288/jquery-event-for-user-pressing-enter-in-a-textbox
+			$('#starCoordString').on('keypress', function (e) {
+			if(e.which === 13){
+				//Disable textbox to prevent multiple submit
+				 $(this).attr("disabled", "disabled");
+				 //Do Stuff, submit, etc..
+				 radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
+				 //Enable the textbox again if needed.
+				 $(this).removeAttr("disabled");
+			}
+});
+
+		}); // End document ready
+		</script>
+
+	</body>
+</html>
