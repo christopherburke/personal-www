@@ -40,10 +40,10 @@
 									</header>
 
 									<span class="image left"><img src="images/TESSInSpaceRender1.jpeg" alt="" /></span>Convert the most common stellar coordinate string formats into RA and Declination decimal degrees along with several other standard coordinate formats.
-									Double check that one of the output formats agrees with the format that was entered to confirm the conversion was done correctly.
-									Javascript and Python versions are available <a href="https://github.com/christopherburke/radecparse">HERE</a>.
-									<h3>Enter Coordinates of Star:</h3></b><input id="starCoordString" style="width:20em" type="text"><div id="starCoordError" style="display: none; color: red;">Error Message!</div>
-										<button id="starCoordRunJava">Convert</button>
+									Alternatively, resolve a common star name into coordinates using the <a href="http://vizier.u-strasbg.fr/vizier/doc/sesame.htx">CDS Sesame Name Resolving Service</a>.
+									Javascript and Python versions of the coordinate conversion code are <a href="https://github.com/christopherburke/radecparse">available</a>.
+									<h3>Enter Coordinates or Name of Star:</h3></b><input id="starCoordString" style="width:20em" type="text"><div id="starCoordError" style="display: none; color: red;">Error Message!</div>
+										<button id="starCoordRunJava">Convert Coords</button>&nbsp;<button id="nameResolveRun">Resolve Name</button><br />
 									<b>RA & Declination [deg]: </b><span id="starCoordOutput" style="display: none;">Output Text</span>
 									<!--
 									<hr class="major" />
@@ -105,7 +105,7 @@
 			<script src="assets/js/main.js"></script>
 			<script src="assets/js/radecparse.1.1.min.js"></script>
 
-		<!-- radecparse feed input from text box -->
+		<!-- radecparse and name resolver feed input from text box -->
 		<script>
 		$(document).ready(function() {
 			function radecfeedit(inputId, errorId, outputId) {
@@ -130,21 +130,64 @@
 				}
 			}
 
+			function sesamefeedit(inputId, errorId, outputId) {
+				$(errorId).hide();
+				$(errorId).text('Trying to Resolve...');
+				$(errorId).show();
+				$(outputId).hide();
+				var urlwant = 'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-o';
+				var starName = $(inputId).val();
+				var valid = false;
+				var errorStr = `Could Not Resolve Name: ${starName}`;
+				var datasplit = [];
+				$.get(urlwant, starName, function(data) {
+					let idx = data.indexOf('%J ');
+					if (idx > -1) {
+						var curdata = data.substr(idx);
+						let idx2 = curdata.indexOf('\n');
+						if (idx2 > -1) {
+  						curdata = curdata.substr(0,idx2);
+	  					datasplit = curdata.split(' ');
+							valid = true;
+							errorStr = '';
+							var htmlout = parseFloat(datasplit[1]).toFixed(8) + ' ' + parseFloat(datasplit[2]).toFixed(8);
+							// Success also run degconvert to get other formats
+							var degOut = degconvert(parseFloat(datasplit[1]), parseFloat(datasplit[2]));
+							if (degOut[0]) {
+								for (i=1;i<=5;i++) {
+									htmlout = htmlout + "<br>" + degOut[i];
+								}
+							}
+							// append degconvert output formats
+							$(errorId).hide();
+							$(outputId).html(htmlout);
+							$(outputId).show();
+						}
+					} else {
+						$(errorId).text(errorStr);
+						$(errorId).show();
+					}
+				});
+			}
+
 			$('#starCoordRunJava').click(function() {
 				radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
 			}); // End Click event
+			$('#nameResolveRun').click(function() {
+				sesamefeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
+			});
 			// Press enter in textbox event from
 			// https://stackoverflow.com/questions/6524288/jquery-event-for-user-pressing-enter-in-a-textbox
-			$('#starCoordString').on('keypress', function (e) {
-			if(e.which === 13){
+			//$('#starCoordString').on('keypress', function (e) {
+			//if(e.which === 13){
 				//Disable textbox to prevent multiple submit
-				 $(this).attr("disabled", "disabled");
+			//	 $(this).attr("disabled", "disabled");
 				 //Do Stuff, submit, etc..
-				 radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
+			//	 radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
 				 //Enable the textbox again if needed.
-				 $(this).removeAttr("disabled");
-			}
-});
+			//	 $(this).removeAttr("disabled");
+			//}
+			//});
 
 		}); // End document ready
 		</script>
