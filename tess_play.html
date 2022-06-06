@@ -106,7 +106,29 @@
 			<script src="assets/js/radecparse.1.1.min.js"></script>
 
 		<!-- radecparse and name resolver feed input from text box -->
-		<script>
+		<script type='text/javascript'>
+			// Webassembly module setup the print function
+			// that is linked to the wasi fd_write in tess_stars2px.js that gets populated with the
+			// fprintf calls in the c code.
+			var Module = {
+				preRun: [],
+				postRun: [],
+				print: (function() {
+					return function(text) {
+						if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+						// These replacements are necessary if you render to raw HTML
+						//text = text.replace(/&/g, "&amp;");
+						//text = text.replace(/</g, "&lt;");
+						//text = text.replace(/>/g, "&gt;");
+						//text = text.replace('\n', '<br>', 'g');
+						let curHtml = $('#starCoordOutput').html();
+						curHtml = curHtml + '<br>' + text;
+						$('#starCoordOutput').html(curHtml);
+					};
+				})()
+			};
+		</script>
+		<script type='text/javascript'>
 		$(document).ready(function() {
 			function radecfeedit(inputId, errorId, outputId) {
 				$(errorId).hide();
@@ -121,8 +143,11 @@
 							htmlout = htmlout + "<br>" + degOut[i];
 						}
 					}
+					htmlout = htmlout + "<hr class=\"major\" /><h2>TESS Observability</h2>";
+
 					// append degconvert output formats
 					$(outputId).html(htmlout);
+					_tess_stars2px(rdpOut[0], rdpOut[1]);
 					$(outputId).show();
 				} else {
 					$(errorId).text(rdpOut[3]);
@@ -158,9 +183,13 @@
 									htmlout = htmlout + "<br>" + degOut[i];
 								}
 							}
+							htmlout = htmlout + "<hr class=\"major\" /><h2>TESS Observability</h2>";
 							// append degconvert output formats
 							$(errorId).hide();
 							$(outputId).html(htmlout);
+
+							// Call tess_stars2px
+							_tess_stars2px(parseFloat(datasplit[1]), parseFloat(datasplit[2]));
 							$(outputId).show();
 						}
 					} else {
@@ -191,6 +220,8 @@
 
 		}); // End document ready
 		</script>
+		<script src="assets/js/tess_stars2px.js"></script>
+
 
 	</body>
 </html>
