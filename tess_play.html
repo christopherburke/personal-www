@@ -40,15 +40,18 @@
 									</header>
 
 									<span class="image left"><img src="images/TESSInSpaceRender1.jpeg" alt="" /></span>
-									Convert the most common stellar coordinate string formats into RA and Declination decimal
-									degrees along with several other standard coordinate formats. Alternatively, resolve a common
-									star name into coordinates using the
+									Was your star of interest observed by TESS? If so, which sectors and which pixels contain the target?
+									Enter the RA and Declination coordinates of a target in the box below and click on the 'Convert RA & Dec Coords' button to find out.
+									Alternatively, you can enter a common name for a star or <code>TIC &lt;tic id number&gt;</code> then click on the 'Resolve Name'
+									button to find out. In addition, your input stellar coordinates or target name are converted to
+									several other standard coordinate formats as a convenience to cut and paste into other web tools.
+									Star name resolving provided by the
 									<a href="https://vizier.u-strasbg.fr/vizier/doc/sesame.htx">CDS Sesame Name Resolving Service</a>.
-									Also displays whether your coordinate or named query was observed by TESS using a webassembly version
+									Observability of TESS provided by a webassembly version
 									of <a href="https://github.com/christopherburke/tess-point">tess-point</a>.
-									Javascript and Python versions of the coordinate conversion code are <a href="https://github.com/christopherburke/radecparse">available</a>.
+									Javascript and Python versions of the coordinate conversion code are also <a href="https://github.com/christopherburke/radecparse">available</a>.
 									<h3>Enter Coordinates or Name of Star:</h3></b><input id="starCoordString" style="width:20em" type="text"><div id="starCoordError" style="display: none; color: red;">Error Message!</div>
-										<button id="starCoordRunJava">Convert Coords</button>&nbsp;<button id="nameResolveRun">Resolve Name</button><br />
+										<button id="starCoordRunJava">Convert RA & Dec Coords</button>&nbsp;<button id="nameResolveRun">Resolve Name</button><br />
 									<b>RA & Declination [deg]: </b><span id="starCoordOutput" style="display: none;">Output Text</span>
 									<!--
 									<hr class="major" />
@@ -127,7 +130,7 @@
 						//text = text.replace(/>/g, "&gt;");
 						//text = text.replace('\n', '<br>', 'g');
 						let curHtml = $('#starCoordOutput').html();
-						curHtml = curHtml + '<br>' + text;
+						curHtml = curHtml + text + '<br>';
 						$('#starCoordOutput').html(curHtml);
 					};
 				})()
@@ -148,7 +151,7 @@
 							htmlout = htmlout + "<br>" + degOut[i];
 						}
 					}
-					htmlout = htmlout + "<hr class=\"major\" /><h2>TESS Observability</h2>";
+					htmlout = htmlout + "<br><br><b>TESS Observability</b><br>";
 
 					// append degconvert output formats
 					$(outputId).html(htmlout);
@@ -188,7 +191,7 @@
 									htmlout = htmlout + "<br>" + degOut[i];
 								}
 							}
-							htmlout = htmlout + "<hr class=\"major\" /><h2>TESS Observability</h2>";
+							htmlout = htmlout + "<br><br><b>TESS Observability</b><br>";
 							// append degconvert output formats
 							$(errorId).hide();
 							$(outputId).html(htmlout);
