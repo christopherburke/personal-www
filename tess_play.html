@@ -39,8 +39,13 @@
 										<h1>TESS Playground</h1>
 									</header>
 
-									<span class="image left"><img src="images/TESSInSpaceRender1.jpeg" alt="" /></span>Convert the most common stellar coordinate string formats into RA and Declination decimal degrees along with several other standard coordinate formats.
-									Alternatively, resolve a common star name into coordinates using the <a href="https://vizier.u-strasbg.fr/vizier/doc/sesame.htx">CDS Sesame Name Resolving Service</a>.
+									<span class="image left"><img src="images/TESSInSpaceRender1.jpeg" alt="" /></span>
+									Convert the most common stellar coordinate string formats into RA and Declination decimal
+									degrees along with several other standard coordinate formats. Alternatively, resolve a common
+									star name into coordinates using the
+									<a href="https://vizier.u-strasbg.fr/vizier/doc/sesame.htx">CDS Sesame Name Resolving Service</a>.
+									Also displays whether your coordinate or named query was observed by TESS using a webassembly version
+									of <a href="https://github.com/christopherburke/tess-point">tess-point</a>.
 									Javascript and Python versions of the coordinate conversion code are <a href="https://github.com/christopherburke/radecparse">available</a>.
 									<h3>Enter Coordinates or Name of Star:</h3></b><input id="starCoordString" style="width:20em" type="text"><div id="starCoordError" style="display: none; color: red;">Error Message!</div>
 										<button id="starCoordRunJava">Convert Coords</button>&nbsp;<button id="nameResolveRun">Resolve Name</button><br />
