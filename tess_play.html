@@ -50,9 +50,54 @@
 									Observability of TESS provided by a webassembly version
 									of <a href="https://github.com/christopherburke/tess-point">tess-point</a>.
 									Javascript and Python versions of the coordinate conversion code are also <a href="https://github.com/christopherburke/radecparse">available</a>.
-									<h3>Enter Coordinates or Name of Star:</h3></b><input id="starCoordString" style="width:20em" type="text"><div id="starCoordError" style="display: none; color: red;">Error Message!</div>
-										<button id="starCoordRunJava">Convert RA & Dec Coords</button>&nbsp;<button id="nameResolveRun">Resolve Name</button><br />
-									<b>RA & Declination [deg]: </b><span id="starCoordOutput" style="display: none;">Output Text</span>
+									<b><h3>Enter Coordinates or Name of Star:</h3></b>
+									<input id="starCoordString" style="width:20em" type="text">
+									<div id="starCoordError" style="display: none; color: red;">Error Message!</div>
+									<button id="starCoordRunJava">Convert RA & Dec Coords</button>&nbsp;<button id="nameResolveRun">Resolve Name</button></br>
+									<!-- Star coordinate output Table -->
+									<div class="table-wrapper" id="starCoordOutput" style="display: none;max-width:20em;">
+					          <h4>RA & Declination Formats</h4>
+					          <table class="alt" id="starCoordOutputTable">
+					            <tbody>
+											</tbody>
+					          </table>
+					        </div>
+									<button id="queryMAST" style="display: none;">Check MAST for SPOC Light Curve Holdings</button>
+									<!-- tess-point output table -->
+									<div class="table-wrapper" id="tesspointOutput" style="display: none;max-width:33em;">
+					          <h4>TESS Observability</h4>
+					          <table class="alt" id="tesspointOutputTable">
+											<thead>
+												<tr>
+													<th>Sector</th>
+													<th>Camera</th>
+													<th>CCD</th>
+													<th>Column [pix]</th>
+													<th>Row [pix]</th>
+													<th>Edge Warn</th>
+												</tr>
+											</thead>
+					            <tbody>
+											</tbody>
+					          </table>
+					        </div>
+									<!-- queryMAST LC holdings Table -->
+									<div class="table-wrapper" id="queryMASTOutput" style="display: none;">
+										<h4>MAST Light Curve Holdings</h4>
+										<table class="alt" id="queryMASTOutputTable">
+											<thead>
+												<tr>
+													<th>TIC ID</th>
+													<th>Sector Number</th>
+													<th>Exposure Time [s]</th>
+													<th>Download</th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+					          </table>
+					        </div>
+
 									<!--
 									<hr class="major" />
 
@@ -129,45 +174,66 @@
 						//text = text.replace(/</g, "&lt;");
 						//text = text.replace(/>/g, "&gt;");
 						//text = text.replace('\n', '<br>', 'g');
-						let curHtml = $('#starCoordOutput').html();
-						curHtml = curHtml + text + '<br>';
-						$('#starCoordOutput').html(curHtml);
+						// remove the \n
+						text = shrinkspaces(text).trim();
+						text = text.replace('\n', '', 'g');
+						let textArr = text.split(' ');
+						// There is a header addded to to tess-point output
+						// catch it and ignore this line
+						if (textArr[0] !== 'Sector') {
+							var curHtml = '<tr>';
+							for (i=0; i<6; i++) {
+								if (typeof textArr[i] !== 'undefined') {
+									curHtml = curHtml + '<td>'+ textArr[i] + '</td>';
+								}
+							}
+							curHtml = curHtml + '</tr>';
+						}
+						$('#tesspointOutput'+'Table > tbody:last-child').append(curHtml);
 					};
 				})()
 			};
 		</script>
 		<script type='text/javascript'>
 		$(document).ready(function() {
-			function radecfeedit(inputId, errorId, outputId) {
+			var curlStr = '#!/bin/sh\n'; // Accumulate curl commands for download
+      var ticIds = []; // Accmulate target ids that are encountered
+
+			function radecfeedit(inputId, errorId, outputId, outputId2, outputId3) {
 				$(errorId).hide();
 				$(outputId).hide();
+				$(outputId2).hide();
+				$(outputId3).hide();
+				$(outputId3+"Output").hide();
+				$(outputId + "Table tbody").empty();
+				$(outputId2 + "Table tbody").empty();
+				$(outputId3+"OutputTable tbody").empty();
+				$(outputId3).off('click');
+				$(outputId3+"Output a").remove();
+				$(outputId3).text("Check MAST for SPOC Light Curve Holdings");
 				var rdpOut = rdp($(inputId).val());
 				if (rdpOut[2]) {
-					var htmlout = rdpOut[0].toFixed(8) + ' ' + rdpOut[1].toFixed(8);
-					// Success also run degconvert to get other formats
-					var degOut = degconvert(rdpOut[0], rdpOut[1]);
-					if (degOut[0]) {
-						for (i=1;i<=5;i++) {
-							htmlout = htmlout + "<br>" + degOut[i];
-						}
-					}
-					htmlout = htmlout + "<br><br><b>TESS Observability</b><br>";
-
-					// append degconvert output formats
-					$(outputId).html(htmlout);
-					_tess_stars2px(rdpOut[0], rdpOut[1]);
-					$(outputId).show();
+					main_input(rdpOut[0], rdpOut[1], inputId, errorId, outputId, outputId2, outputId3);
 				} else {
 					$(errorId).text(rdpOut[3]);
 					$(errorId).show();
 				}
-			}
+			} // end radecfeedit
 
-			function sesamefeedit(inputId, errorId, outputId) {
+			function sesamefeedit(inputId, errorId, outputId, outputId2, outputId3) {
 				$(errorId).hide();
 				$(errorId).text('Trying to Resolve...');
 				$(errorId).show();
 				$(outputId).hide();
+				$(outputId2).hide();
+				$(outputId3).hide();
+				$(outputId3+"Output").hide();
+				$(outputId + "Table tbody").empty();
+				$(outputId2 + "Table tbody").empty();
+				$(outputId3+"OutputTable tbody").empty();
+				$(outputId3).off('click');
+				$(outputId3+"Output a").remove();
+				$(outputId3).text("Check MAST for SPOC Light Curve Holdings");
 				var urlwant = 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-o';
 				var starName = $(inputId).val();
 				var valid = false;
@@ -183,48 +249,147 @@
 	  					datasplit = curdata.split(' ');
 							valid = true;
 							errorStr = '';
-							var htmlout = parseFloat(datasplit[1]).toFixed(8) + ' ' + parseFloat(datasplit[2]).toFixed(8);
-							// Success also run degconvert to get other formats
-							var degOut = degconvert(parseFloat(datasplit[1]), parseFloat(datasplit[2]));
-							if (degOut[0]) {
-								for (i=1;i<=5;i++) {
-									htmlout = htmlout + "<br>" + degOut[i];
-								}
-							}
-							htmlout = htmlout + "<br><br><b>TESS Observability</b><br>";
-							// append degconvert output formats
 							$(errorId).hide();
-							$(outputId).html(htmlout);
-
-							// Call tess_stars2px
-							_tess_stars2px(parseFloat(datasplit[1]), parseFloat(datasplit[2]));
-							$(outputId).show();
+							main_input(parseFloat(datasplit[1]), parseFloat(datasplit[2]), inputId, errorId, outputId, outputId2, outputId3);
 						}
 					} else {
 						$(errorId).text(errorStr);
 						$(errorId).show();
 					}
-				});
-			}
+				}); // end get
+			} // end sesamefeedit
 
 			$('#starCoordRunJava').click(function() {
-				radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
+				radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput', '#tesspointOutput', '#queryMAST');
 			}); // End Click event
 			$('#nameResolveRun').click(function() {
-				sesamefeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
+				sesamefeedit('#starCoordString', '#starCoordError', '#starCoordOutput', '#tesspointOutput', '#queryMAST');
 			});
-			// Press enter in textbox event from
-			// https://stackoverflow.com/questions/6524288/jquery-event-for-user-pressing-enter-in-a-textbox
-			//$('#starCoordString').on('keypress', function (e) {
-			//if(e.which === 13){
-				//Disable textbox to prevent multiple submit
-			//	 $(this).attr("disabled", "disabled");
-				 //Do Stuff, submit, etc..
-			//	 radecfeedit('#starCoordString', '#starCoordError', '#starCoordOutput');
-				 //Enable the textbox again if needed.
-			//	 $(this).removeAttr("disabled");
-			//}
-			//});
+
+			function mastfeedit(ra, dec, errorId, outputId3) {
+        curlStr = '#!/bin/sh\n';
+        ticIds = [];
+        var urlwant = 'https://mast.stsci.edu/api/v0/invoke';
+        mastObj = {
+          "service":"Mast.Caom.Filtered.Position",
+          "format":"json",
+          //"pagesize":500,
+          //"page":1,
+          "params":{
+            "columns":"dataURL,obs_id,target_name,t_exptime,sequence_number,t_min,t_max,obsid",
+            "filters":[
+              {"paramName":"dataproduct_type","values":["timeseries"]},
+              {"paramName":"project","values":["TESS"]},
+              {"paramName":"provenance_name","values":["SPOC","TESS-SPOC"]}
+            ],
+            "position":ra.toString()+", "+dec.toString()+", 0.002"
+          }
+        }
+        $.post(urlwant,"request="+JSON.stringify(mastObj), function(data) {
+          fill_mast_holding_table(data, outputId3);
+        });
+      } // end mastfeedit
+
+      function fill_mast_holding_table(data, outputId3) {
+        var dataLen = Object.keys(data.data).length;
+        if (dataLen == 0) {
+          // No data
+          $(outputId3).text('No Lightcurves at this location');
+        } else {
+          //$(errorId).hide();
+          // Need to sort the data by sector than by exposure time
+          // See https://stackoverflow.com/questions/6913512/how-to-sort-an-array-of-objects-by-multiple-
+          //console.log(data.data);
+          data.data.sort((a,b) => a.sequence_number - b.sequence_number || a.t_exptime - b.t_exptime);
+          //console.log(data.data);
+          for (i=0; i<dataLen; i++) {
+            let tmp = data.data[i].obs_id;
+            let tmp2 = data.data[i].dataURL;
+            // Need to filter out dv multisector time series
+            var notDV = true;
+            if (tmp.substring(0,4) === "tess") {
+              // Need to distinguish between multisector dv time series and single Sector lc
+              if (data.data[i].dataURL.substr(-7,7) === "lc.fits") {
+                var secStr = tmp.substring(18,23);
+              } else {
+                notDV = false;
+              }
+            }
+            if (tmp.substring(0,4) === "hlsp") {
+              var secStr = tmp.substring(42,47);
+            }
+            if (notDV) {
+              $(outputId3+"OutputTable tbody").append(`<tr><td>${data.data[i]["target_name"]}</td><td>${data.data[i].sequence_number}</td><td>${data.data[i]["t_exptime"].toString()}</td><td><a id=${data.data[i].obsid.toString()} href=''>link</a></td></tr>`);
+              reg_MAST_create_link(data.data[i].dataURL, data.data[i].obsid, data.data[i].target_name, data.data[i].t_exptime);
+            }
+          }
+          $(outputId3+"Output").show();
+          // Create download link for the curl script
+          var uniqTics = [...new Set(ticIds)];
+          var uniqTicsStr = uniqTics.join('_');
+          var a = document.createElement("a");
+          a.href = window.URL.createObjectURL(new Blob([curlStr], {type:"text/plain"}));
+          a.text = 'Download curl script for all light curves';
+          var now = new Date();
+          a.download = "tess_"+uniqTicsStr+"_"+now.toISOString().substring(0,10)+"_lcs.sh";
+          // attach to table section
+          $(outputId3+"Output h4").after(a);
+					$(outputId3).hide();
+					$(outputId3).text("Check MAST for SPOC Light Curve Holdings");
+        }
+      }
+
+      // From a given obsid set the download link
+      function reg_MAST_create_link(dataURL, obsid, tic, expt) {
+          var urlwant = 'https://mast.stsci.edu/api/v0.1/Download/file?uri=';
+          var request_str = urlwant + dataURL;
+          // Make the link
+          $('#'+obsid).attr('href',request_str);
+          // append link for curl download
+          let fileName = dataURL.split('/');
+          fileName = fileName[fileName.length - 1];
+          curlStr += 'curl -C - -L -o '+fileName+' "'+request_str+'"\n';
+          ticIds.push(tic);
+      } // end function
+
+			// This runs main page given ra & dec (NUMBER FORMAT)
+			// outputId - is jquery selector for coordinate format table
+			// outputId2 - selector for tess-point table
+			// outputid3 - selector for MAST holdings table
+			function main_input(ra, dec, inputId, errorId, outputId, outputId2, outputId3) {
+				var htmlout = '<tr><td>' + ra.toFixed(8) + ' ' + dec.toFixed(8) + '</td></tr>';
+				// Run degconvert to get other formats
+				var degOut = degconvert(ra, dec);
+				if (degOut[0]) {
+					for (i=1;i<=5;i++) {
+						htmlout = htmlout + "<tr><td>" + degOut[i] + '</td></tr>';
+					}
+				}
+				$(outputId+'Table > tbody:last-child').append(htmlout);
+				$(outputId).show();
+
+				// Start the tess-point table
+				_tess_stars2px(ra, dec);
+				$(outputId2).show();
+
+				// Check to see if tess-point returned any results
+				// Get first row first cell of tess-point table
+				// The first cell has string 'Star' if nothing was found
+				// From tess-point
+				var value=$(outputId2+"Table tbody:last-child").html();
+				if (value.substring(8,12) !== 'Star') { // There is potential for light curve available
+					//console.log('Start MAST LC Query process');
+					// Show MAST LC holdings button
+					$(outputId3).show();
+					// Attach query MAST LC holdings function with ra & dec
+					$(outputId3).click(function() {
+						//$(outputId3).attr("disabled", "disabled");
+						$(this).text("Querying MAST...");
+						mastfeedit(ra, dec, errorId, outputId3);
+						//$(outputId3).removeAttr("disabled");
+					}); // End Click event
+				}
+			} // end main_input
 
 		}); // End document ready
 		</script>
