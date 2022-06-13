@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>TESS Light Curve Explorer</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner">
+
+							<!-- Header -->
+							<header id="header">
+								<a href="index.html" class="logo"><strong>Christopher J. Burke</strong> TESS Research Scientist @ MIT</a>
+								<ul class="icons">
+									<li><a href="https://twitter.com/curiousterran" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="https://github.com/christopherburke/" class="icon brands fa-github"><span class="label">Github</span></a></li>
+									<li><a href="https://orcid.org/0000-0002-7754-9486">ORCID</a></li>
+									<li><a href="https://ui.adsabs.harvard.edu/search/filter_database_fq_database=AND&filter_database_fq_database=database%3A%22astronomy%22&filter_property_fq_property=AND&filter_property_fq_property=property%3A%22refereed%22&fq=%7B!type%3Daqp%20v%3D%24fq_database%7D&fq=%7B!type%3Daqp%20v%3D%24fq_property%7D&fq=%7B!type%3Daqp%20v%3D%24fq_aff%7D&fq_aff=(((aff_facet_hier%3A%220%2FSTScI%22%20OR%20aff_facet_hier%3A%220%2FMIT%22%20OR%20aff_facet_hier%3A%220%2FSETI%20Inst%22%20OR%20aff_facet_hier%3A%220%2FNASA%20Ames%22))%20OR%20aff_facet_hier%3A%220%2FHarvard%20U%22%20OR%20aff_facet_hier%3A%220%2FSETI%20Inst%22%20OR%20aff_facet_hier%3A%220%2FNASA%20Ames%22%20OR%20aff_facet_hier%3A%221%2FMIT%2FKavli%20Inst%22%20OR%20aff_facet_hier%3A%221%2FSI%2FCfA%22%20OR%20aff_facet_hier%3A%220%2FSTScI%22)&fq_database=(database%3A%22astronomy%22)&fq_property=(property%3A%22refereed%22)&q=%20author%3A%22Burke%2C%20Christopher%22&sort=date%20desc%2C%20bibcode%20desc&p_=0">ADS</a></li>
+									<li><a href="https://scholar.google.com/citations?user=hxo9mEUAAAAJ&hl=en&oi=ao">Google Scholar</a></li>
+									<li><a href="https://www.linkedin.com/in/christopher-burke-1b315a130" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+								</ul>
+							</header>
+
+							<!-- Content -->
+              <section>
+                <header class="main">
+                  <h1>TESS Light Curve Explorer</h1>
+                </header>
+                Explore TESS mission light curves. Select a TESS SPOC light curve fits file from your local hard drive.
+                This page will load an interactive flux time series figure of the data. In order to improve plot responsiveness,
+                the TESS 20 second and 2 minute data are binned to a 10 minute sample. This page uses a <a href="https://github.com/christopherburke/fits-wasm">webassembly version</a>
+                of the <a href="https://heasarc.gsfc.nasa.gov/fitsio">cfitsio library</a>. Figure plotting is provided by <a href="https://plotly.com/javascript">plotly.js</a>.</br>
+                <input type="file" id="inputFitsID" onchange="load_local_file()" style="display: none;"></input>
+                <button id="headerShow" style="display: none;">Show Headers</button>
+                <div id="headerDialog" title="Fits Headers"><span id="headerDialogContent"></span></div>
+                <div id="notValidFits" style="display: none;">Not a recognized SPOC TESS light curve file. The Show Headers button will display the fits header contents.</div>
+                <div id="plotOutput" style="width:780px;height:400px;"></div>
+
+              </section>
+          </div>
+        </div>
+        <!-- End Main -->
+        <!-- Sidebar -->
+				<div id="sidebar">
+					<div class="inner">
+						<!-- Menu -->
+							<nav id="menu">
+								<header class="major">
+									<h2>Menu</h2>
+								</header>
+								<ul>
+									<li><a href="index.html">Homepage</a></li>
+									<li><a href="tess_play.html">TESS Playground</a></li>
+									<li><a href="tess_fits_play.html">TESS Light Curve Explorer</a></li>
+								</ul>
+							</nav>
+						<!-- Section -->
+							<section>
+								<header class="major">
+									<h2>Get in touch</h2>
+									<p>My email address is obfuscated (hopefully) with NATO phonetic alphabet and unicode characters.</p>
+								</header>
+								<ul class="contact">
+									<li class="icon solid fa-envelope">cjburke ⚛ <strong>M</strong>ike&nbsp<strong>I</strong>ndigo&nbsp<strong>T</strong>ango ⚬ <strong>E</strong>cho&nbsp<strong>D</strong>elta&nbsp<strong>U</strong>niform</li>
+									<li class="icon solid fa-home">MIT Kavli Institute for Astrophysics and Space Research<br />
+									77 Massachusetts Avenue<br />
+									Cambridge, MA 02139</li>
+								</ul>
+							</section>
+
+						<!-- Footer -->
+							<footer id="footer">
+								<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+							</footer>
+
+					</div>
+				</div>
+        <!-- END Sidebar -->
+			</div> <!-- End Wrapper -->
+
+      <!-- Load all the scripts-->
+      <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+      <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
+      <script src="assets/js/tess_fitslc_export_pre.js"></script>
+
+      <script type='text/javascript'>
+        // Check if there is a remote fits files in the URL call
+        var urlFile = {}
+        var query = window.location.search.substring(1).split("&");
+        for (var i=0, max=query.length; i<max; i++) {
+          if (query[i] == "") {continue;} // empty last &
+          var param = query[i].split('=');
+          urlFile[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+        }
+        // If there was not a uri parameter in the URL call
+        // display the file load input
+        if (!('uri' in urlFile)) {
+          //console.log('Going to load local file');
+          $("#inputFitsID").show();
+        } else {
+          //console.log('Going to load a file from MAST ', urlFile['uri']);
+					$('#notValidFits').text('Streaming Light Curve Fits file from MAST... Please have patience');
+					$('#notValidFits').show();
+					$('#notValidFits').css('color', 'red');
+          load_remote_file(urlFile['uri']);
+        }
+
+        async function load_remote_file(uriWant){
+          mastURL = 'https://mast.stsci.edu/api/v0.1/Download/file?uri=';
+          let blob = await fetch(mastURL + uriWant).then(response => {
+            if (!response.ok) {
+							$('#notValidFits').show();
+							$('#notValidFits').text('Something went wrong! Unable to load fits file. Sorry');
+              return null;
+            }
+            return response.blob();
+          });
+          const uint8_view = new Uint8Array(await blob.arrayBuffer());
+          FS.writeFile('temp.fits', uint8_view);
+          run_fits_exporter();
+        }
+
+        let reader= new FileReader();
+        async function load_local_file(){
+            let files = document.getElementById('inputFitsID').files;
+            let file=files[0];
+            reader.addEventListener('loadend', load_local_file_continued);
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function load_local_file_continued(){
+          $('#headerShow').hide();
+          $('#headerDialogContent').html('');
+          $('#notValidFits').hide();
+          $('#plotOutput').empty();
+          let result=reader.result;
+          const uint8_view = new Uint8Array(result);
+          await FS.writeFile('temp.fits', uint8_view);
+          run_fits_exporter();
+        }
+
+        function run_fits_exporter(e){
+          // Get the header
+          var hdrret = _anyfits_getheader();
+          //console.log('header read return: ',hdrret);
+          let content = FS.readFile('header.txt',{encoding:'utf8'});
+          content = content.replace(/(?:\r\n|\r|\n)/g, '<br>');
+          $('#headerDialogContent').html(content);
+          $('#headerShow').show();
+          // Verify that this is a NASA Ames file with pdc flux
+          if ((content.indexOf("ORIGIN  = 'NASA/Ames'") != -1) && (content.indexOf("TTYPE8  = 'PDCSAP_FLUX'") != -1)) {
+            idStore = array_allocate(4, 'HEAP32');
+            var retVal = _tess_fitslc_getnrows(idStore.offset);
+            //console.log('Get rows return: ',retVal);
+            var nRows = idStore.data[0];
+            var nReads = idStore.data[1];
+            //console.log('Got N rows: ',nRows,' EXP_NUM: ',nReads);
+            // Need to do allocate arrays, but we bin data
+            // to 10 minutes; 600 sec; 300 instrument reads
+            var binFAC = 1;
+            var useN = nRows;
+            if (nReads < 300) {
+              binFAC = Math.floor(300/nReads);
+              useN = Math.floor(nRows/binFAC);
+            }
+            //console.log('Binning Factor: ',binFAC, ' bin array len: ', useN);
+
+
+            // allocate the arrays
+            timeStore = array_allocate(useN, 'HEAPF64');
+            pdcStore = array_allocate(useN, 'HEAPF32');
+            qualStore = array_allocate(useN, 'HEAPF32');
+            statStore = array_allocate(6, 'HEAPF64');
+
+            var resstat = _tess_fitslc_export(timeStore.offset, pdcStore.offset, qualStore.offset, statStore.offset, idStore.offset, binFAC, 1);
+            //console.log(statStore.data);
+
+            if (resstat ==  0) { // sucessful reading of light curve fits file
+							$('#notValidFits').hide();
+              useN = idStore.data[3];
+              kppdc = pdcStore.data.filter( (x,ii) => ii < useN);
+              kptime = timeStore.data.filter( (x,ii) => ii < useN);
+              // Calculate the sigma upper limit for data
+              let ymin = statStore.data[2];
+              let ymax = statStore.data[3];
+              let mn = statStore.data[4];
+              let sig = statStore.data[5];
+              // convert the  sigma to relative flux diff in ppt
+              let ylim = ((mn+6.0*sig)/mn - 1.0) * 1.0e3;
+              ymin = (ymin/mn - 1.0) * 1.0e3;
+              ymax = (ymax/mn - 1.0) * 1.0e3;
+              let ylimpos = ylim;
+              let ylimneg = -ylim;
+              // look for strong EB with negative flux
+              if (ymin < -ylim) {ylimneg = ymin;}
+              dotheplot(kptime, kppdc, idStore.data[0], idStore.data[1], ylimpos, ylimneg);
+            } else {
+              $('#notValidFits').show();
+            }
+          } else {
+            $('#notValidFits').show();
+          }
+        }
+
+        function dotheplot(xin, yin, tic, sector, ylimpos, ylimneg) {
+          var data1 = {
+            x: xin,
+            y: yin,
+            mode: 'markers',
+            type: 'scatter',
+            //name: 'PDC Flux',
+            //showlegend: false,
+            marker: {size:5.0, maxdisplayed:0}
+          };
+          var layout = {
+            title: {text:"TIC "+tic.toString()+" Sector "+sector.toString(),family:'helvetica'},
+            showlegend: false,
+            margin:{b:40, l:40, r:40, t:60},
+            width:1024,
+            height:640,
+            font:{size:22},
+            xaxis:{linewidth:3.0, mirror:'allticks', anchor:'free', position:0,
+                    showgrid:false, tickfont:{family:'helvetica', size:20},
+                     ticklen:10.0, tickmode:'auto',tickwidth:3.0,
+                     title:{font:{family:'helvetica',size:25}, text:'TESS Julian Date'},
+                     zeroline:false, automargin:true, nticks:10, tickmode:'auto',ticks:'inside',
+                     minor:{ticklen:5.0,ticks:'inside',tickwidth:2.0}},
+            yaxis:{linewidth:3.0, mirror:'allticks', anchor:'free', position:0,
+                     showgrid:false, tickfont:{family:'helvetica', size:20},
+                      ticklen:10.0, tickmode:'auto',tickwidth:3.0,
+                      title:{font:{family:'helvetica',size:25}, text:'Relative Flux Change [ppt]'},
+                      zeroline:false, automargin:true, nticks:10, tickmode:'auto',ticks:'inside',
+                      minor:{ticklen:5.0,ticks:'inside',tickwidth:2.0},
+                      range:[ylimneg,ylimpos]}
+          };
+          var config = {
+            responsive:true
+          };
+          Plotly.newPlot('plotOutput', [data1], layout, config);
+        }
+      </script>
+
+      <!-- Handle the header dialog -->
+      <script type='text/javascript'>
+        $(function() {
+          // Turn the headerDialog div into a dialog box with jquery
+          $('#headerDialog').dialog({
+            autoOpen: false,
+            width: 'auto',
+            height: '480',
+            resizable: true,
+            draggable: true
+          }).css("font-size", "13px");
+          // Attach opening headerDialog to headerShow button
+          $('#headerShow').click(function() {
+            $('#headerDialog').dialog("open");
+          });
+
+        });
+      </script>
+			<script src="assets/js/tess_fitslc_export.js"></script>
+
+  </body>
+</html>

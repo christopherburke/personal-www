@@ -50,6 +50,25 @@
 									Observability of TESS provided by a webassembly version
 									of <a href="https://github.com/christopherburke/tess-point">tess-point</a>.
 									Javascript and Python versions of the coordinate conversion code are also <a href="https://github.com/christopherburke/radecparse">available</a>.
+									If the target was observed by TESS, then one is given the option to query the <a href="https://archive.stsci.edu/missions-and-data/tess">MAST TESS archive</a>
+									and return a table of <a href="https://heasarc.gsfc.nasa.gov/docs/tess/pipeline.html">NASA Ames Science Processing Operations Center (SPOC)</a> lightcurve FITS
+									data files if they are available. Not all targets have lightcurves available. If light curves are available, then links
+									to download individual FITs files or all light curve files will be presented. A link to preview a lightcurve
+									is also available, but due to Cross-Origin Resource Sharing <a href="https://medium.com/@electra_chong/what-is-cors-what-is-it-used-for-308cafa4df1a">(CORS)</a>
+									 restrictions, one needs to either download the file locally, go to the <a href="tess_fits_play.html">TESS Light Curve Explorer</a>,
+									 and upload the downloaded fits file manually. Alternatively, on can click on the preview light curve link
+									 to directly go to the preview after <a href="javascript:void(0)" id="corsDialogLink">CLICKING HERE</a> to read about bypassing CORS protection
+									 with a chrome extension.
+									 <div id="headerDialog" title="CORS Bypassing">
+									<!-- START DIATRIBE ABOUT HOW TO BYPASS CORS -->
+									<span id="headerDialogContent">
+											I use the Allow CORS: Access-Control-Allow-Origin chrome extension to disable CORS protection.
+											After install the extension is not active, one needs to select the extension's icon and in the
+											larger window select the large 'C:' icon. If the icon has color then it is active. You
+											should add https://mast.stsci.edu to the whitelist as this is the source of the light curve
+											fits data. When you are finished with previewing light curves, then select the extension
+											icon to 'gray out'/deactivate the extension. This will re-enable CORS protections.
+									 </span></div>
 									<b><h3>Enter Coordinates or Name of Star:</h3></b>
 									<input id="starCoordString" style="width:20em" type="text">
 									<div id="starCoordError" style="display: none; color: red;">Error Message!</div>
@@ -91,6 +110,7 @@
 													<th>Sector Number</th>
 													<th>Exposure Time [s]</th>
 													<th>Download</th>
+													<th>Light Curve Preview</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -123,6 +143,7 @@
 								<ul>
 									<li><a href="index.html">Homepage</a></li>
 									<li><a href="tess_play.html">TESS Playground</a></li>
+									<li><a href="tess_fits_play.html">TESS Light Curve Explorer</a></li>
 								</ul>
 							</nav>
 						<!-- Section -->
@@ -157,7 +178,8 @@
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 			<script src="assets/js/radecparse.1.1.min.js"></script>
-
+			<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 		<!-- radecparse and name resolver feed input from text box -->
 		<script type='text/javascript'>
 			// Webassembly module setup the print function
@@ -319,7 +341,7 @@
               var secStr = tmp.substring(42,47);
             }
             if (notDV) {
-              $(outputId3+"OutputTable tbody").append(`<tr><td>${data.data[i]["target_name"]}</td><td>${data.data[i].sequence_number}</td><td>${data.data[i]["t_exptime"].toString()}</td><td><a id=${data.data[i].obsid.toString()} href=''>link</a></td></tr>`);
+              $(outputId3+"OutputTable tbody").append(`<tr><td>${data.data[i]["target_name"]}</td><td>${data.data[i].sequence_number}</td><td>${data.data[i]["t_exptime"].toString()}</td><td><a id=${data.data[i].obsid.toString()} href=''>link</a></td><td><a id=${data.data[i].obsid.toString()}_preview href='' target="_blank">link</a></td></tr>`);
               reg_MAST_create_link(data.data[i].dataURL, data.data[i].obsid, data.data[i].target_name, data.data[i].t_exptime);
             }
           }
@@ -345,6 +367,9 @@
           var request_str = urlwant + dataURL;
           // Make the link
           $('#'+obsid).attr('href',request_str);
+					var urlwant2 = 'http://localhost:8000/tess_fits_play.html?uri=';
+					var request_str2 = urlwant2 + dataURL;
+					$('#'+obsid+'_preview').attr('href', request_str2);
           // append link for curl download
           let fileName = dataURL.split('/');
           fileName = fileName[fileName.length - 1];
@@ -390,6 +415,19 @@
 					}); // End Click event
 				}
 			} // end main_input
+
+			// Turn the headerDialog div into a dialog box with jquery
+			$('#headerDialog').dialog({
+				autoOpen: false,
+				width: 'auto',
+				height: '480',
+				resizable: true,
+				draggable: true
+			}).css("font-size", "13px");
+			// Attach opening headerDialog to headerShow button
+			$('#corsDialogLink').click(function() {
+				$('#headerDialog').dialog("open");
+			});
 
 		}); // End document ready
 		</script>
