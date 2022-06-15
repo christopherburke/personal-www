@@ -128,13 +128,20 @@
         async function load_remote_file(uriWant){
           mastURL = 'https://mast.stsci.edu/api/v0.1/Download/file?uri=';
           let blob = await fetch(mastURL + uriWant).then(response => {
-            if (!response.ok) {
-							$('#notValidFits').show();
-							$('#notValidFits').text('Something went wrong! Unable to load fits file. Sorry');
-              return null;
-            }
-            return response.blob();
-          });
+						if (response.ok) {
+	            return response.blob();
+	          }
+	          throw new Error('Something Went Wrong');
+	        })
+	        .catch((error)=> {
+	          console.log(error);
+	          $('#notValidFits').text('An Error Occurred When Trying to Retrieve File.\
+	          Open browser developer tools and view javascript console to see if it is a CORS issue.\
+	          CORS issues can be resolved by downloading the fits file and uploading it to\
+	           https://www.eta-earth.org/tess_fits_play.html or using a chrome browser\
+	           extension to bypass CORS restrictions.');
+	          $('#notValidFits').show();
+	        });
           const uint8_view = new Uint8Array(await blob.arrayBuffer());
           FS.writeFile('temp.fits', uint8_view);
           run_fits_exporter();
