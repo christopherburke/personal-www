@@ -102,13 +102,14 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
       <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
       <script src="assets/js/tess_fitslc_export_pre.js"></script>
-			<script src="assets/js/tess_fitslc_export.js"></script>
 
       <script type='text/javascript'>
 			  // These things need to occur after all the other scripts have loaded
-				document.onreadystatechange = function () {
-  				if (document.readyState == "complete") {
-		        // Check if there is a remote fits files in the URL call
+				// The emscripten way (at least one way) is to add the startup
+				// into a special function of emscriptens' Module
+        // Check if there is a remote fits files in the URL call
+				var Module = {
+					onRuntimeInitialized: function () {
 		        var urlFile = {}
 		        var query = window.location.search.substring(1).split("&");
 		        for (var i=0, max=query.length; i<max; i++) {
@@ -128,50 +129,52 @@
 							$('#notValidFits').css('color', 'red');
 		          load_remote_file(urlFile['uri']);
 		        }
-
-		        async function load_remote_file(uriWant){
-		          mastURL = 'https://mast.stsci.edu/api/v0.1/Download/file?uri=';
-		          let blob = await fetch(mastURL + uriWant).then(response => {
-								if (response.ok) {
-			            return response.blob();
-			          }
-			          throw new Error('Something Went Wrong');
-			        })
-			        .catch((error)=> {
-			          console.log(error);
-			          $('#notValidFits').text('An Error Occurred When Trying to Retrieve File.\
-			          Open browser developer tools and view javascript console to see if it is a CORS issue.\
-			          CORS issues can be resolved by downloading the fits file and uploading it to\
-			           https://www.eta-earth.org/tess_fits_play.html or using a chrome browser\
-			           extension to bypass CORS restrictions.');
-			          $('#notValidFits').show();
-			        });
-		          const uint8_view = new Uint8Array(await blob.arrayBuffer());
-		          FS.writeFile('temp.fits', uint8_view);
-		          run_fits_exporter();
-		        }
-
-		        let reader= new FileReader();
-		        async function load_local_file(){
-		            let files = document.getElementById('inputFitsID').files;
-		            let file=files[0];
-		            reader.addEventListener('loadend', load_local_file_continued);
-		            reader.readAsArrayBuffer(file);
-		        }
-
-		        async function load_local_file_continued(){
-		          $('#headerShow').hide();
-		          $('#headerDialogContent').html('');
-		          $('#notValidFits').hide();
-		          $('#plotOutput').empty();
-		          let result=reader.result;
-		          const uint8_view = new Uint8Array(result);
-		          await FS.writeFile('temp.fits', uint8_view);
-		          run_fits_exporter();
-		        }
 					}
-				}
+				};
 			</script>
+			<script type='text/javascript'>
+        async function load_remote_file(uriWant){
+          mastURL = 'https://mast.stsci.edu/api/v0.1/Download/file?uri=';
+          let blob = await fetch(mastURL + uriWant).then(response => {
+						if (response.ok) {
+	            return response.blob();
+	          }
+	          throw new Error('Something Went Wrong');
+	        })
+	        .catch((error)=> {
+	          console.log(error);
+	          $('#notValidFits').text('An Error Occurred When Trying to Retrieve File.\
+	          Open browser developer tools and view javascript console to see if it is a CORS issue.\
+	          CORS issues can be resolved by downloading the fits file and uploading it to\
+	           https://www.eta-earth.org/tess_fits_play.html or using a chrome browser\
+	           extension to bypass CORS restrictions.');
+	          $('#notValidFits').show();
+	        });
+          const uint8_view = new Uint8Array(await blob.arrayBuffer());
+          FS.writeFile('temp.fits', uint8_view);
+          run_fits_exporter();
+        }
+
+        let reader= new FileReader();
+        async function load_local_file(){
+            let files = document.getElementById('inputFitsID').files;
+            let file=files[0];
+            reader.addEventListener('loadend', load_local_file_continued);
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function load_local_file_continued(){
+          $('#headerShow').hide();
+          $('#headerDialogContent').html('');
+          $('#notValidFits').hide();
+          $('#plotOutput').empty();
+          let result=reader.result;
+          const uint8_view = new Uint8Array(result);
+          await FS.writeFile('temp.fits', uint8_view);
+          run_fits_exporter();
+        }
+			</script>
+
 			<script type='text/javascript'>
         function run_fits_exporter(e){
           // Get the header
@@ -292,6 +295,6 @@
 
         });
       </script>
-
+			<script src="assets/js/tess_fitslc_export.js"></script>
   </body>
 </html>
