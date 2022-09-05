@@ -134,8 +134,18 @@
 			</script>
 			<script type='text/javascript'>
         async function load_remote_file(uriWant){
-          mastURL = 'https://mast.stsci.edu/api/v0.1/Download/file?uri=';
-          let blob = await fetch(mastURL + uriWant).then(response => {
+		    	// parse the MAST uri for light curve files to the aws link
+		      var uriSplit = uriWant.split('-');
+		      var secNum = uriSplit[1];
+		      var ticStr = uriSplit[2];
+		      var dir1 = ticStr.substring(0,4);
+		      var dir2 = ticStr.substring(4,8);
+		      var dir3 = ticStr.substring(8,12);
+		      var dir4 = ticStr.substring(12,16);
+		      var pathSplit = uriWant.split('/');
+		      var awshttp = 'http://s3.amazonaws.com/stpubdata/tess/public/tid/'+secNum+'/'+dir1+'/'+dir2+'/'+dir3+'/'+dir4+'/'+pathSplit[2];
+		      console.log(awshttp);
+          let blob = await fetch(awshttp).then(response => {
 						if (response.ok) {
 	            return response.blob();
 	          }
