@@ -143,7 +143,7 @@
 		      var dir3 = ticStr.substring(8,12);
 		      var dir4 = ticStr.substring(12,16);
 		      var pathSplit = uriWant.split('/');
-		      var awshttp = 'http://s3.amazonaws.com/stpubdata/tess/public/tid/'+secNum+'/'+dir1+'/'+dir2+'/'+dir3+'/'+dir4+'/'+pathSplit[2];
+		      var awshttp = 'https://s3.amazonaws.com/stpubdata/tess/public/tid/'+secNum+'/'+dir1+'/'+dir2+'/'+dir3+'/'+dir4+'/'+pathSplit[2];
 		      console.log(awshttp);
           let blob = await fetch(awshttp).then(response => {
 						if (response.ok) {
