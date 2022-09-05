@@ -53,14 +53,11 @@
 									If the target was observed by TESS, then one is given the option to query the <a href="https://archive.stsci.edu/missions-and-data/tess">MAST TESS archive</a>
 									and return a table of <a href="https://heasarc.gsfc.nasa.gov/docs/tess/pipeline.html">NASA Ames Science Processing Operations Center (SPOC)</a> lightcurve FITS
 									data files if they are available. Not all targets have lightcurves available. If light curves are available, then links
-									to download individual FITs files or all light curve files will be presented. A link to preview a lightcurve
-									is also available, but due to Cross-Origin Resource Sharing <a href="https://medium.com/@electra_chong/what-is-cors-what-is-it-used-for-308cafa4df1a">(CORS)</a>
-									 restrictions, one needs to either download the file locally, go to the <a href="tess_fits_play.html">TESS Light Curve Explorer</a>,
-									 and upload the downloaded fits file manually. Alternatively, on can click on the preview light curve link
-									 to directly go to the preview after <a href="javascript:void(0)" id="corsDialogLink">CLICKING HERE</a> to read about bypassing CORS protection
-									 with a chrome extension.
+									to download individual FITs files or all light curve files will be presented. A link to download or preview a lightcurve
+									is also available.
+									<!--
 									 <div id="headerDialog" title="CORS Bypassing">
-									<!-- START DIATRIBE ABOUT HOW TO BYPASS CORS -->
+
 									<span id="headerDialogContent">
 											I use the Allow CORS: Access-Control-Allow-Origin chrome extension to disable CORS protection.
 											After install the extension is not active, one needs to select the extension's icon and in the
@@ -69,6 +66,7 @@
 											fits data. When you are finished with previewing light curves, then select the extension
 											icon to 'gray out'/deactivate the extension. This will re-enable CORS protections.
 									 </span></div>
+								 -->
 									<b><h3>Enter Coordinates or Name of Star:</h3></b>
 									<input id="starCoordString" style="width:20em" type="text">
 									<div id="starCoordError" style="display: none; color: red;">Error Message!</div>
@@ -417,17 +415,17 @@
 			} // end main_input
 
 			// Turn the headerDialog div into a dialog box with jquery
-			$('#headerDialog').dialog({
-				autoOpen: false,
-				width: 'auto',
-				height: '480',
-				resizable: true,
-				draggable: true
-			}).css("font-size", "13px");
+			//$('#headerDialog').dialog({
+			//	autoOpen: false,
+			//	width: 'auto',
+			//	height: '480',
+			//	resizable: true,
+			//	draggable: true
+			//}).css("font-size", "13px");
 			// Attach opening headerDialog to headerShow button
-			$('#corsDialogLink').click(function() {
-				$('#headerDialog').dialog("open");
-			});
+			//$('#corsDialogLink').click(function() {
+			//	$('#headerDialog').dialog("open");
+			//});
 
 		}); // End document ready
 		</script>

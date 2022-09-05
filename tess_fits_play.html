@@ -154,10 +154,9 @@
 	        .catch((error)=> {
 	          console.log(error);
 	          $('#notValidFits').text('An Error Occurred When Trying to Retrieve File.\
-	          Open browser developer tools and view javascript console to see if it is a CORS issue.\
-	          CORS issues can be resolved by downloading the fits file and uploading it to\
-	           https://www.eta-earth.org/tess_fits_play.html or using a chrome browser\
-	           extension to bypass CORS restrictions.');
+	          Open browser developer tools and view javascript console to see what happened.\
+	          Issue may be resolved by downloading the fits file and uploading it to\
+	           https://www.eta-earth.org/tess_fits_play.html.');
 	          $('#notValidFits').show();
 	        });
           const uint8_view = new Uint8Array(await blob.arrayBuffer());
