@@ -327,6 +327,8 @@
             let tmp2 = data.data[i].dataURL;
             // Need to filter out dv multisector time series
             var notDV = true;
+						// For now need to filter out and hlsp
+						var notHLSP = true;
             if (tmp.substring(0,4) === "tess") {
               // Need to distinguish between multisector dv time series and single Sector lc
               if (data.data[i].dataURL.substr(-7,7) === "lc.fits") {
@@ -337,8 +339,9 @@
             }
             if (tmp.substring(0,4) === "hlsp") {
               var secStr = tmp.substring(42,47);
+							notHLSP = false;
             }
-            if (notDV) {
+            if (notDV && notHLSP) {
               $(outputId3+"OutputTable tbody").append(`<tr><td>${data.data[i]["target_name"]}</td><td>${data.data[i].sequence_number}</td><td>${data.data[i]["t_exptime"].toString()}</td><td><a id=${data.data[i].obsid.toString()} href=''>link</a></td><td><a id=${data.data[i].obsid.toString()}_preview href='' target="_blank">link</a></td></tr>`);
               reg_MAST_create_link(data.data[i].dataURL, data.data[i].obsid, data.data[i].target_name, data.data[i].t_exptime);
             }
